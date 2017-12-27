@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Redirect} from 'react-router-dom';
+import { Redirect} from 'react-router-dom';
 import { connect } from 'react-redux';
 import fire from '../fire';
 
@@ -11,11 +11,13 @@ class DefaultLanding extends Component {
   }
   componentWillMount(){
     /* Create reference to messages in Firebase Database */
-    let playersRef = fire.database().ref(this.todaysDate + '/players').orderByKey().limitToLast(100);
+    let playersRef = fire.database().ref(this.todaysDate + '/players');
     playersRef.on('child_added', snapshot => {
-      /* Update React state when message is added at Firebase Database */
-      let player = { text: snapshot.val(), id: snapshot.key };
-      this.setState({ players: [player].concat(this.state.players) });
+
+      let player = { name: snapshot.val().name, id: snapshot.key };
+      this.setState({players: [...this.state.players, player]});
+
+      console.log('players ===> ', this.state.players);
     });
     // if game started
     let gameOn = fire.database().ref(this.todaysDate + '/gameStarted');
@@ -28,12 +30,13 @@ class DefaultLanding extends Component {
   }
   addPlayer(e) {
     e.preventDefault();
-    // set name to query own data later
-    if (!localStorage.getItem('profile')) {
-        localStorage.setItem('profile', JSON.stringify({name: this.inputEl.value}))
-    }
     /* Send the message to Firebase */
-    fire.database().ref(this.todaysDate + '/players').push( this.inputEl.value );
+    let playerRef = fire.database().ref(this.todaysDate + '/players').push();
+    playerRef.set({name: this.inputEl.value});
+
+    if(!localStorage.getItem('profile')) {
+        localStorage.setItem('profile', JSON.stringify({name: this.inputEl.value, id: playerRef.key}))
+    }
     this.inputEl.value = ''; // <- clear the input
   }
 
@@ -61,7 +64,7 @@ class DefaultLanding extends Component {
           { this.state.players.length ? <p style={{textAlign:'center'}}>People ready</p> : null }
           <ul>
             { /* Render the list of messages */
-              this.state.players.map( player => <li key={player.id}>{player.text}</li> )
+              this.state.players.map( player => <li key={player.id}>{player.name}</li> )
             }
           </ul>
         </form>
