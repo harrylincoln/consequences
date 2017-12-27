@@ -1,9 +1,9 @@
-import { FETCH_USER } from '../actions/types';
+import { CREATE_GAME } from '../actions/types';
 
 export default function(state = null, action) {
-  // console.log(action);
+  console.log(action);
   switch (action.type) {
-    case FETCH_USER:
+    case CREATE_GAME:
     return action.payload || false;
     default:
     return state;
