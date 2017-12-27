@@ -1,24 +1,26 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import fire from '../fire';
-
 class DefaultLanding extends Component {
   constructor(props) {
     super(props);
+    this.todaysDate = new Date().toISOString().slice(0, 10);
     this.state = { games: [] };
   }
   componentWillMount() {
-    let gamesRef = fire.database().ref('games').orderByKey().limitToLast(100);
-    gamesRef.on('child_added', snapshot => {
-      /* Update React state when message is added at Firebase Database */
-      let game = { text: snapshot.val(), id: snapshot.key };
-      this.setState({ games: [game].concat(this.state.games) });
-    })
+    // let gamesRef = fire.database().ref('games/' + this.todaysDate);
+    // gamesRef.on('child_added', snapshot => {
+    // })
   }
   addGame(e){
     e.preventDefault(); // <- prevent form submit from reloading the page
     /* Send the message to Firebase */
-    fire.database().ref('games').push(this.inputEl.value);
+    fire.database().ref('games/' + this.todaysDate + '/players/').push({
+      name: this.inputEl.value, age: '30'
+    })
+    // fire.database().ref('games/' + this.todaysDate).set({
+    //     players: {name: this.inputEl.value, age: '30'}
+    // });
     this.inputEl.value = ''; // <- clear the input
   }
 
