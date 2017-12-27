@@ -3,6 +3,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
 import defaultLanding from './defaultLanding';
+import startGame from './startGame';
 
 import Header from './Header';
 import Routes from './Routes';
@@ -13,7 +14,7 @@ const Dashboard = () => <h2>Dashboard</h2>;
 class App extends Component {
 
   componentDidMount() {
-    console.log('this.props', this.props);
+    // console.log('this.props', this.props);
     // this.props.listenStart();
     // this.props.createGame();
   }
@@ -25,6 +26,7 @@ class App extends Component {
           <div>
             <Header />
             <Route exact path="/" component={defaultLanding} />
+            <Route exact path="/start" component={startGame} />
             <Route exact path="/dashboard" component={Dashboard} />
             <Route path="/routes" component={Routes} />
           </div>

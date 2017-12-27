@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
+import {Redirect} from 'react-router-dom';
 import { connect } from 'react-redux';
 import fire from '../fire';
+
 class DefaultLanding extends Component {
   constructor(props) {
     super(props);
     this.todaysDate = new Date().toISOString().slice(0, 10);
-    this.state = { players: [] };
+    this.state = { players: [], redirect: false };
   }
   componentWillMount(){
     /* Create reference to messages in Firebase Database */
@@ -18,11 +20,18 @@ class DefaultLanding extends Component {
     // if game started
     let gameOn = fire.database().ref(this.todaysDate + '/gameStarted');
     gameOn.on('value', snapshot => {
-      if (snapshot.val() === true) console.log('game started!');
+      if (snapshot.val() === true) {
+        console.log('game started!');
+        this.setState({ redirect : true});
+      }
     });
   }
-  addPlayer(e){
-    e.preventDefault(); // <- prevent form submit from reloading the page
+  addPlayer(e) {
+    e.preventDefault();
+    // set name to query own data later
+    if (!localStorage.getItem('profile')) {
+        localStorage.setItem('profile', JSON.stringify({name: this.inputEl.value}))
+    }
     /* Send the message to Firebase */
     fire.database().ref(this.todaysDate + '/players').push( this.inputEl.value );
     this.inputEl.value = ''; // <- clear the input
@@ -32,9 +41,15 @@ class DefaultLanding extends Component {
     e.preventDefault(); // <- prevent form submit from reloading the page
     /* Send the message to Firebase */
     fire.database().ref(this.todaysDate + '/').update({gameStarted: true});
+    this.setState({ redirect : true});
   }
 
   render() {
+    const { redirect } = this.state;
+    if (redirect) {
+       return <Redirect to='/start' />;
+     }
+
     return (
       <div style={{textAlign:'center'}}>
         <h2>
@@ -54,6 +69,7 @@ class DefaultLanding extends Component {
           <input type="submit" value="start game"/>
         </form> : null }
       </div>
+
     );
   }
 }
