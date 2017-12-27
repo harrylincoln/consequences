@@ -18,9 +18,7 @@ class DefaultLanding extends Component {
   addGame(e){
     e.preventDefault(); // <- prevent form submit from reloading the page
     /* Send the message to Firebase */
-    fire.database().ref('games').push({
-        player: [{name: this.inputEl.value}]
-    });
+    fire.database().ref('games').push(this.inputEl.value);
     this.inputEl.value = ''; // <- clear the input
   }
 

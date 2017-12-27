@@ -1,27 +1,33 @@
 {
-  "name": "skate",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "engines": {
-    "node": "8.1.1",
-    "npm": "5.0.3"
+  "name": "client",
+  "version": "0.1.0",
+  "proxy": {
+    "/auth/google": {
+      "target": "http://localhost:5000"
+    },
+    "/api/*": {
+      "target": "http://localhost:5000"
+    }
+  },
+  "dependencies": {
+    "axios": "^0.16.2",
+    "google-maps-react": "^1.1.0",
+    "materialize-css": "^0.100.2",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "react-redux": "^5.0.6",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.0.14",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0"
   },
   "scripts": {
-    "start": "node index.js",
-    "server": "nodemon index.js",
-    "client": "npm run start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
   },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "concurrently": "^3.5.0",
-    "cookie-session": "^1.3.2",
-    "express": "^4.16.1",
-    "mongoose": "^4.12.0",
-    "nodemon": "^1.12.1",
-    "passport": "^0.4.0",
-    "passport-google-oauth20": "^1.0.0"
+  "devDependencies": {
+    "firebase": "^4.8.1"
   }
 }
