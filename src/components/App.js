@@ -11,8 +11,10 @@ const Dashboard = () => <h2>Dashboard</h2>;
 
 
 class App extends Component {
+
   componentDidMount() {
-    // this.props.fetchUser();
+    console.log('this.props', this.props);
+    // this.props.listenStart();
     // this.props.createGame();
   }
 
