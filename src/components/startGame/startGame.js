@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 // import fire from '../fire';
+require('./startGame.scss');
 
 class startGame extends Component {
   constructor(props) {
@@ -12,8 +13,8 @@ class startGame extends Component {
   }
   render() {
     return (
-      <div>
-      <p>So this is the startGame</p>
+      <div className='start-game'>
+        <p>So this is the startGame</p>
       </div>
     );
   }

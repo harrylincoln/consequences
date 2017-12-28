@@ -3,7 +3,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
 import defaultLanding from './defaultLanding';
-import startGame from './startGame';
+import startGame from './startGame/startGame';
 
 import Header from './Header';
 import Routes from './Routes';
