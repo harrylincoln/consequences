@@ -6,3 +6,15 @@
   display:inline-block;
   margin-top: 20px;
 }
+
+.clearOut {
+  opacity: 0.5;
+}
+
+.blink_me {
+  animation: blinker 2s linear infinite;
+}
+
+@keyframes blinker {
+  50% { opacity: 0; }
+}

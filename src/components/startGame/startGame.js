@@ -7,6 +7,8 @@ class startGame extends Component {
     super(props);
     this.todaysDate = new Date().toISOString().slice(0, 10);
     this.profile = JSON.parse(localStorage.getItem('profile'));
+    this.savedArr = [];
+    this.state= {submitted: false};
   }
   componentWillMount() {
     console.log('this.profile', this.profile);
@@ -22,36 +24,55 @@ class startGame extends Component {
           readyCount = readyCount + 1;
         }
       });
-      console.log('this.readyCount', this.readyCount);
+      console.log('readyCount', readyCount);
       console.log('this.profile.totalPlayers', this.profile.totalPlayers);
       if (readyCount === this.profile.totalPlayers) {
-        alert('all players have answered!');
+        console.log('all questions answered!');
       }
     });
   }
 
-  markAllReadyForNextFalse () {
+  pushToAdjacentPlayerQuestionArr(idx, entry) {
+    const stage = 1;
+    let lsCache = this.profile;
+    lsCache.currentPosition = idx;
+    localStorage.setItem('profile', JSON.stringify(lsCache));
+
+    // write to next player's ledger
+    let nextPlayersIDXRef = this.savedArr[idx + stage] || this.savedArr[0];
+    console.log('nextPlayersIDXRef --->', nextPlayersIDXRef);
+    let nextPlayersDBRef = fire.database().ref(this.todaysDate + '/players/' + nextPlayersIDXRef + '/questions').push();
+    nextPlayersDBRef.set(entry);
 
   }
 
   markIndividualReady(e) {
     e.preventDefault();
-    fire.database().ref(this.todaysDate + '/players/' + this.profile.id + '/ready_for_next').set(true);
+    this.setState({submitted: true});
     // question logic
+    let playerPos = fire.database().ref(this.todaysDate + '/players');
     // find out what position player is in array
+    playerPos.once('value', (snap) => {
+      snap.forEach(player => {
+        this.savedArr.push(player.key);
+      });
+    });
+    // console.log('index! -->', this.savedArr.indexOf(this.profile.id));
     // save position in localStorage
-    // write to next one's ledger
+    this.pushToAdjacentPlayerQuestionArr(this.savedArr.indexOf(this.profile.id), this.inputEl.value);
 
+    fire.database().ref(this.todaysDate + '/players/' + this.profile.id + '/ready_for_next').set(true);
   }
 
   render() {
     return (
       <div className={styles.startGame}>
-      <form onSubmit={this.markIndividualReady.bind(this)}>
+      <form className={this.state.submitted ? styles.clearOut : ''} onSubmit={this.markIndividualReady.bind(this)}>
         <label htmlFor="question">A guy's name</label>
         <input id="question" type="text" ref={ el => this.inputEl = el }/>
-        <input type="submit" value="Ready for next step"/>
+        <input type="submit" disabled={this.state.submitted} value="Ready for next step"/>
       </form>
+      {this.state.submitted ? <p className={styles.blink_me}>Waiting for other players to finish, idiots ....</p> : null }
       </div>
     );
   }
