@@ -12,11 +12,11 @@ class startGame extends Component {
     console.log('this.profile', this.profile);
 
     // listen for child of players/ change, loop all players, break if ready_for_next === false
-    let playersRef = fire.database().ref(this.todaysDate + '/players');
+    let playersRef = fire.database().ref(this.todaysDate + '/players/');
 
     playersRef.on('child_added', snapshot => {
       snapshot.forEach(player => {
-        if (!player.val().ready_for_next) {
+        if (player.val().ready_for_next !== true) {
           console.log('not all ready for next');
         } else {
           console.log('all ready for next');
