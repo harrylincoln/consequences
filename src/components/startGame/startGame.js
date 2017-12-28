@@ -7,7 +7,6 @@ class startGame extends Component {
     super(props);
     this.todaysDate = new Date().toISOString().slice(0, 10);
     this.profile = JSON.parse(localStorage.getItem('profile'));
-    this.readyCount = 0;
   }
   componentWillMount() {
     console.log('this.profile', this.profile);
@@ -16,17 +15,16 @@ class startGame extends Component {
     let playersRef = fire.database().ref(this.todaysDate + '/players');
 
     playersRef.on('value', snapshot => {
+      let readyCount = 0;
       console.log('snapshot of each', snapshot.val());
       snapshot.forEach(player => {
         if(player.val().ready_for_next === true) {
-          this.readyCount = this.readyCount + 1;
-        } else {
-          this.readyCount = 0;
+          readyCount = readyCount + 1;
         }
       });
       console.log('this.readyCount', this.readyCount);
       console.log('this.profile.totalPlayers', this.profile.totalPlayers);
-      if (this.readyCount === this.profile.totalPlayers) {
+      if (readyCount === this.profile.totalPlayers) {
         alert('all players have answered!');
       }
     });
