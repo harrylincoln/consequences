@@ -7,21 +7,28 @@ class startGame extends Component {
     super(props);
     this.todaysDate = new Date().toISOString().slice(0, 10);
     this.profile = JSON.parse(localStorage.getItem('profile'));
+    this.readyCount = 0;
   }
   componentWillMount() {
     console.log('this.profile', this.profile);
 
     // listen for child of players/ change, loop all players, break if ready_for_next === false
-    let playersRef = fire.database().ref(this.todaysDate + '/players/');
+    let playersRef = fire.database().ref(this.todaysDate + '/players');
 
-    playersRef.on('child_added', snapshot => {
+    playersRef.on('value', snapshot => {
+      console.log('snapshot of each', snapshot.val());
       snapshot.forEach(player => {
-        if (player.val().ready_for_next !== true) {
-          console.log('not all ready for next');
+        if(player.val().ready_for_next === true) {
+          this.readyCount = this.readyCount + 1;
         } else {
-          console.log('all ready for next');
+          this.readyCount = 0;
         }
       });
+      console.log('this.readyCount', this.readyCount);
+      console.log('this.profile.totalPlayers', this.profile.totalPlayers);
+      if (this.readyCount === this.profile.totalPlayers) {
+        alert('all players have answered!');
+      }
     });
   }
 
@@ -29,9 +36,9 @@ class startGame extends Component {
 
   }
 
-  markIndividualReady() {
+  markIndividualReady(e) {
+    e.preventDefault();
     fire.database().ref(this.todaysDate + '/players/' + this.profile.id + '/ready_for_next').set(true);
-
     // question logic
     // find out what position player is in array
     // save position in localStorage

@@ -13,7 +13,6 @@ class DefaultLanding extends Component {
     /* Create reference to messages in Firebase Database */
     let playersRef = fire.database().ref(this.todaysDate + '/players');
     playersRef.on('child_added', snapshot => {
-
       let player = { name: snapshot.val().name, id: snapshot.key };
       this.setState({players: [...this.state.players, player]});
 
@@ -23,6 +22,11 @@ class DefaultLanding extends Component {
     let gameOn = fire.database().ref(this.todaysDate + '/gameStarted');
     gameOn.on('value', snapshot => {
       if (snapshot.val() === true) {
+        // save total players
+        let profileObj = JSON.parse(localStorage.getItem('profile'));
+        profileObj.totalPlayers = this.state.players.length;
+        localStorage.setItem('profile', JSON.stringify(profileObj));
+
         console.log('game started!');
         this.setState({ redirect : true});
       }
@@ -32,7 +36,7 @@ class DefaultLanding extends Component {
     e.preventDefault();
     /* Send the message to Firebase */
     let playerRef = fire.database().ref(this.todaysDate + '/players').push();
-    playerRef.set({name: this.inputEl.value});
+    playerRef.set({name: this.inputEl.value, ready_for_next: false});
 
     if(!localStorage.getItem('profile')) {
         localStorage.setItem('profile', JSON.stringify({name: this.inputEl.value, id: playerRef.key}))
@@ -44,6 +48,8 @@ class DefaultLanding extends Component {
     e.preventDefault(); // <- prevent form submit from reloading the page
     /* Send the message to Firebase */
     fire.database().ref(this.todaysDate + '/').update({gameStarted: true});
+
+    // redirect to next screen
     this.setState({ redirect : true});
   }
 
