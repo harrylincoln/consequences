@@ -5,6 +5,8 @@ import * as actions from '../actions';
 import defaultLanding from './defaultLanding';
 import startGame from './startGame/startGame';
 
+import styles from 'materialize-css/dist/css/materialize.min.css';
+
 import Header from './Header';
 import Routes from './Routes';
 
@@ -21,7 +23,7 @@ class App extends Component {
 
   render() {
     return (
-      <div className="container">
+      <div className={styles.container}>
         <BrowserRouter>
           <div>
             <Header />
