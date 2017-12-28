@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import * as actions from '../actions';
 import defaultLanding from './defaultLanding';
 import startGame from './startGame/startGame';
+import secondComp from './secondComp/secondComp';
 
 import styles from 'materialize-css/dist/css/materialize.min.css';
 
@@ -29,6 +30,7 @@ class App extends Component {
             <Header />
             <Route exact path="/" component={defaultLanding} />
             <Route exact path="/start" component={startGame} />
+            <Route exact path="/two" component={secondComp} />
             <Route exact path="/dashboard" component={Dashboard} />
             <Route path="/routes" component={Routes} />
           </div>

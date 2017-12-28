@@ -46,11 +46,12 @@ class DefaultLanding extends Component {
 
   startGame(e){
     e.preventDefault(); // <- prevent form submit from reloading the page
-    /* Send the message to Firebase */
+    for(var i = 0; i < this.state.players.length; i++) {
+      let papersRef = fire.database().ref(this.todaysDate + '/papers/' + (i+1)).push();
+      papersRef.set({test: 'one'}); // duff, remove in next one
+    }
+    // say it's started, redirect picked up in compWillMount
     fire.database().ref(this.todaysDate + '/').update({gameStarted: true});
-
-    // redirect to next screen
-    this.setState({ redirect : true});
   }
 
   render() {

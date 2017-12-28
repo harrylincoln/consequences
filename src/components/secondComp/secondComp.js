@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { Redirect} from 'react-router-dom';
 import fire from '../../fire';
-import styles from './startGame.css';
+import styles from '../startGame/startGame.css';
 
-class startGame extends Component {
+class secondComp extends Component {
   constructor(props) {
     super(props);
     this.todaysDate = new Date().toISOString().slice(0, 10);
     this.profile = JSON.parse(localStorage.getItem('profile'));
     this.savedArr = [];
-    this.state= {submitted: false, redirect: false};
+    this.state= {submitted: false, redirectTwo: false};
   }
   componentWillMount() {
     console.log('this.profile', this.profile);
@@ -35,24 +35,24 @@ class startGame extends Component {
   }
 
   pushToAdjacentPlayerQuestionArr(idx, entry) {
-    const stage = 1;
+    const stage = 2;
+    // let lsCache = this.profile;
+    // lsCache.currentPosition = idx;
+    // localStorage.setItem('profile', JSON.stringify(lsCache));
 
     let nextPlayersIDXRef;
-
-    if ((idx + stage) > this.savedArr.length) {
+    if (idx + stage > this.savedArr.length) {
       // REMAINDER TO TAP ON THE BACK
-      nextPlayersIDXRef = (idx + stage) - this.savedArr.length;
+      nextPlayersIDXRef = this.savedArr[idx + stage - this.savedArr.length];
     } else {
-      nextPlayersIDXRef = idx + stage
+      nextPlayersIDXRef = this.savedArr[idx + stage]
     }
+
+    // write to next player's ledger
+    // let nextPlayersIDXRef = this.savedArr[idx + stage] || this.savedArr[0 + stage];
     console.log('nextPlayersIDXRef --->', nextPlayersIDXRef);
-    const papersRefToWrite = fire.database().ref(this.todaysDate + '/papers/' + nextPlayersIDXRef).push();
-    papersRefToWrite.set({firstRound: entry})
-
-    let lsCache = this.profile;
-    lsCache.currentPosition = idx;
-    localStorage.setItem('profile', JSON.stringify(lsCache));
-
+    let nextPlayersDBRef = fire.database().ref(this.todaysDate + '/players/' + nextPlayersIDXRef + '/questions').push();
+    nextPlayersDBRef.set(entry);
   }
 
   markIndividualReady(e) {
@@ -62,25 +62,26 @@ class startGame extends Component {
     let playerPos = fire.database().ref(this.todaysDate + '/players');
     // find out what position player is in array
     playerPos.once('value', (snap) => {
-      snap.forEach((player, i) => {
+      snap.forEach(player => {
         this.savedArr.push(player.key);
       });
     });
     // console.log('index! -->', this.savedArr.indexOf(this.profile.id));
-    // pass position and val to function to place in papers
-    this.pushToAdjacentPlayerQuestionArr((this.savedArr.indexOf(this.profile.id) + 1), this.inputEl.value);
+    // save position in localStorage
+    this.pushToAdjacentPlayerQuestionArr(this.savedArr.indexOf(this.profile.id), this.inputEl.value);
+
     fire.database().ref(this.todaysDate + '/players/' + this.profile.id + '/ready_for_next').set(true);
   }
 
   render() {
-    const { redirect } = this.state;
-    if (redirect) {
-       return <Redirect to='/two' />;
+    const { redirectTwo } = this.state;
+    if (redirectTwo) {
+       return <Redirect to='/three' />;
      }
     return (
       <div className={styles.startGame}>
       <form className={this.state.submitted ? styles.clearOut : ''} onSubmit={this.markIndividualReady.bind(this)}>
-        <label htmlFor="question">A guy's name</label>
+        <label htmlFor="question">A girl's name</label>
         <input id="question" type="text" ref={ el => this.inputEl = el }/>
         <input type="submit" disabled={this.state.submitted} value="Ready for next step"/>
       </form>
@@ -90,4 +91,4 @@ class startGame extends Component {
   }
 }
 
-export default startGame;
+export default secondComp;
