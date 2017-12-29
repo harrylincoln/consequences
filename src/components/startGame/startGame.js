@@ -16,6 +16,12 @@ class startGame extends Component {
 
     // listen for child of players/ change, loop all players, break if ready_for_next === false
     let playersRef = fire.database().ref(this.todaysDate + '/players');
+    // find out what position player is in array
+    playersRef.once('value', (snap) => {
+      snap.forEach((player, i) => {
+        this.savedArr.push(player.key);
+      });
+    });
 
     playersRef.on('value', snapshot => {
       let readyCount = 0;
@@ -58,14 +64,6 @@ class startGame extends Component {
   markIndividualReady(e) {
     e.preventDefault();
     this.setState({submitted: true});
-    // question logic
-    let playerPos = fire.database().ref(this.todaysDate + '/players');
-    // find out what position player is in array
-    playerPos.once('value', (snap) => {
-      snap.forEach((player, i) => {
-        this.savedArr.push(player.key);
-      });
-    });
     // console.log('index! -->', this.savedArr.indexOf(this.profile.id));
     // pass position and val to function to place in papers
     this.pushToAdjacentPlayerQuestionArr((this.savedArr.indexOf(this.profile.id) + 1), this.inputEl.value);
