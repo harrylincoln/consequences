@@ -43,15 +43,14 @@ class startGame extends Component {
 
   pushToAdjacentPlayerQuestionArr(idx, entry) {
     const stage = 1;
-
+    
     let nextPlayersIDXRef;
-
-    if ((idx + stage) > this.savedArr.length) {
-      // REMAINDER TO TAP ON THE BACK
-      nextPlayersIDXRef = (idx + stage) - this.savedArr.length;
+    if((idx + stage) % this.savedArr.length === 0) {
+    	nextPlayersIDXRef = this.savedArr.length;
     } else {
-      nextPlayersIDXRef = idx + stage
+    	nextPlayersIDXRef = (idx + stage) % this.savedArr.length;
     }
+
     console.log('nextPlayersIDXRef --->', nextPlayersIDXRef);
     const papersRefToWrite = fire.database().ref(this.todaysDate + '/papers/' + nextPlayersIDXRef).push();
     papersRefToWrite.set({firstRound: entry})
