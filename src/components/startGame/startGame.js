@@ -35,6 +35,7 @@ class startGame extends Component {
       console.log('this.profile.totalPlayers', this.profile.totalPlayers);
       if (readyCount === this.profile.totalPlayers) {
         console.log('all questions answered!');
+        fire.database().ref(this.todaysDate + '/players/' + this.profile.id + '/ready_for_next').set(false);
         this.setState({ redirect : true});
       }
     });

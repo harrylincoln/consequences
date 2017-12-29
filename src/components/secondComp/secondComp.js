@@ -16,6 +16,12 @@ class secondComp extends Component {
 
     // listen for child of players/ change, loop all players, break if ready_for_next === false
     let playersRef = fire.database().ref(this.todaysDate + '/players');
+    // find out what position player is in array
+    playersRef.once('value', (snap) => {
+      snap.forEach((player, i) => {
+        this.savedArr.push(player.key);
+      });
+    });
 
     playersRef.on('value', snapshot => {
       let readyCount = 0;
@@ -29,6 +35,7 @@ class secondComp extends Component {
       console.log('this.profile.totalPlayers', this.profile.totalPlayers);
       if (readyCount === this.profile.totalPlayers) {
         console.log('all questions answered!');
+        fire.database().ref(this.todaysDate + '/players/' + this.profile.id + '/ready_for_next').set(false);
         this.setState({ redirect : true});
       }
     });
@@ -36,40 +43,31 @@ class secondComp extends Component {
 
   pushToAdjacentPlayerQuestionArr(idx, entry) {
     const stage = 2;
+
+    let nextPlayersIDXRef;
+
+    if ((idx + stage) > this.savedArr.length) {
+      // REMAINDER TO TAP ON THE BACK
+      nextPlayersIDXRef = (idx + stage) - this.savedArr.length;
+    } else {
+      nextPlayersIDXRef = idx + stage
+    }
+    console.log('nextPlayersIDXRef --->', nextPlayersIDXRef);
+    const papersRefToWrite = fire.database().ref(this.todaysDate + '/papers/' + nextPlayersIDXRef).push();
+    papersRefToWrite.set({secondRound: entry})
+
     // let lsCache = this.profile;
     // lsCache.currentPosition = idx;
     // localStorage.setItem('profile', JSON.stringify(lsCache));
 
-    let nextPlayersIDXRef;
-    if (idx + stage > this.savedArr.length) {
-      // REMAINDER TO TAP ON THE BACK
-      nextPlayersIDXRef = this.savedArr[idx + stage - this.savedArr.length];
-    } else {
-      nextPlayersIDXRef = this.savedArr[idx + stage]
-    }
-
-    // write to next player's ledger
-    // let nextPlayersIDXRef = this.savedArr[idx + stage] || this.savedArr[0 + stage];
-    console.log('nextPlayersIDXRef --->', nextPlayersIDXRef);
-    let nextPlayersDBRef = fire.database().ref(this.todaysDate + '/players/' + nextPlayersIDXRef + '/questions').push();
-    nextPlayersDBRef.set(entry);
   }
 
   markIndividualReady(e) {
     e.preventDefault();
     this.setState({submitted: true});
-    // question logic
-    let playerPos = fire.database().ref(this.todaysDate + '/players');
-    // find out what position player is in array
-    playerPos.once('value', (snap) => {
-      snap.forEach(player => {
-        this.savedArr.push(player.key);
-      });
-    });
     // console.log('index! -->', this.savedArr.indexOf(this.profile.id));
-    // save position in localStorage
-    this.pushToAdjacentPlayerQuestionArr(this.savedArr.indexOf(this.profile.id), this.inputEl.value);
-
+    // pass position and val to function to place in papers
+    this.pushToAdjacentPlayerQuestionArr((this.savedArr.indexOf(this.profile.id) + 1), this.inputEl.value);
     fire.database().ref(this.todaysDate + '/players/' + this.profile.id + '/ready_for_next').set(true);
   }
 
