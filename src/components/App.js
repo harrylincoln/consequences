@@ -5,6 +5,7 @@ import * as actions from '../actions';
 import defaultLanding from './defaultLanding';
 import startGame from './startGame/startGame';
 import secondComp from './secondComp/secondComp';
+import thirdComp from './thirdComp/thirdComp';
 
 import styles from 'materialize-css/dist/css/materialize.min.css';
 
@@ -31,6 +32,7 @@ class App extends Component {
             <Route exact path="/" component={defaultLanding} />
             <Route exact path="/start" component={startGame} />
             <Route exact path="/two" component={secondComp} />
+            <Route exact path="/three" component={thirdComp} />
             <Route exact path="/dashboard" component={Dashboard} />
             <Route path="/routes" component={Routes} />
           </div>

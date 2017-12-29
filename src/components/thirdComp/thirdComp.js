@@ -3,13 +3,13 @@ import { Redirect} from 'react-router-dom';
 import fire from '../../fire';
 import styles from '../startGame/startGame.css';
 
-class secondComp extends Component {
+class thirdComp extends Component {
   constructor(props) {
     super(props);
     this.todaysDate = new Date().toISOString().slice(0, 10);
     this.profile = JSON.parse(localStorage.getItem('profile'));
     this.savedArr = [];
-    this.state= {submittedTwo: false, redirectTwo: false};
+    this.state= {submittedThree: false, redirectThree: false};
   }
   componentWillMount() {
     console.log('this.profile', this.profile);
@@ -36,13 +36,13 @@ class secondComp extends Component {
       if (readyCount === this.profile.totalPlayers) {
         console.log('all questions answered!');
         fire.database().ref(this.todaysDate + '/players/' + this.profile.id + '/ready_for_next').set(false);
-        this.setState({ redirectTwo : true});
+        this.setState({ redirectThree : true});
       }
     });
   }
 
   pushToAdjacentPlayerQuestionArr(idx, entry) {
-    const stage = 2;
+    const stage = 3;
 
     let nextPlayersIDXRef;
 
@@ -64,7 +64,7 @@ class secondComp extends Component {
 
   markIndividualReady(e) {
     e.preventDefault();
-    this.setState({submittedTwo: true});
+    this.setState({submittedThree: true});
     // console.log('index! -->', this.savedArr.indexOf(this.profile.id));
     // pass position and val to function to place in papers
     this.pushToAdjacentPlayerQuestionArr((this.savedArr.indexOf(this.profile.id) + 1), this.inputEl.value);
@@ -72,21 +72,21 @@ class secondComp extends Component {
   }
 
   render() {
-    const { redirectTwo } = this.state;
-    if (redirectTwo) {
-       return <Redirect to='/three' />;
+    const { redirectThree } = this.state;
+    if (redirectThree) {
+       return <Redirect to='/four' />;
      }
     return (
       <div className={styles.startGame}>
-      <form className={this.state.submittedTwo ? styles.clearOut : ''} onSubmit={this.markIndividualReady.bind(this)}>
-        <label htmlFor="question">A girl's name</label>
+      <form className={this.state.submittedThree ? styles.clearOut : ''} onSubmit={this.markIndividualReady.bind(this)}>
+        <label htmlFor="question">Where they met... </label>
         <input id="question" type="text" ref={ el => this.inputEl = el }/>
-        <input type="submit" disabled={this.state.submittedTwo} value="Ready for next step"/>
+        <input type="submit" disabled={this.state.submittedThree} value="Ready for next step"/>
       </form>
-      {this.state.submittedTwo ? <p className={styles.blink_me}>Waiting for other players to finish, idiots ....</p> : null }
+      {this.state.submittedThree ? <p className={styles.blink_me}>Waiting for other players to finish, idiots ....</p> : null }
       </div>
     );
   }
 }
 
-export default secondComp;
+export default thirdComp;
