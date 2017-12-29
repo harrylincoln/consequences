@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { Redirect} from 'react-router-dom';
 import fire from '../../fire';
-import styles from './startGame.css';
+import styles from '../startGame/startGame.css';
 
-class startGame extends Component {
+class fourthComp extends Component {
   constructor(props) {
     super(props);
     this.todaysDate = new Date().toISOString().slice(0, 10);
     this.profile = JSON.parse(localStorage.getItem('profile'));
     this.savedArr = [];
-    this.state= {submitted: false, redirect: false};
+    this.state= {submittedFour: false, redirectFour: false};
   }
   componentWillMount() {
     console.log('this.profile', this.profile);
@@ -36,15 +36,16 @@ class startGame extends Component {
       if (readyCount === this.profile.totalPlayers) {
         console.log('all questions answered!');
         fire.database().ref(this.todaysDate + '/players/' + this.profile.id + '/ready_for_next').set(false);
-        this.setState({ redirect : true});
+        this.setState({ redirectFour : true});
       }
     });
   }
 
   pushToAdjacentPlayerQuestionArr(idx, entry) {
-    const stage = 1;
+    const stage = 3;
 
     let nextPlayersIDXRef;
+
     if((idx + stage) % this.savedArr.length === 0) {
     	nextPlayersIDXRef = this.savedArr.length;
     } else {
@@ -53,17 +54,17 @@ class startGame extends Component {
 
     console.log('nextPlayersIDXRef --->', nextPlayersIDXRef);
     const papersRefToWrite = fire.database().ref(this.todaysDate + '/papers/' + nextPlayersIDXRef).push();
-    papersRefToWrite.set({his_name: entry})
+    papersRefToWrite.set({he_said: entry})
 
-    let lsCache = this.profile;
-    lsCache.currentPosition = idx;
-    localStorage.setItem('profile', JSON.stringify(lsCache));
+    // let lsCache = this.profile;
+    // lsCache.currentPosition = idx;
+    // localStorage.setItem('profile', JSON.stringify(lsCache));
 
   }
 
   markIndividualReady(e) {
     e.preventDefault();
-    this.setState({submitted: true});
+    this.setState({submittedFour: true});
     // console.log('index! -->', this.savedArr.indexOf(this.profile.id));
     // pass position and val to function to place in papers
     this.pushToAdjacentPlayerQuestionArr((this.savedArr.indexOf(this.profile.id) + 1), this.inputEl.value);
@@ -71,21 +72,21 @@ class startGame extends Component {
   }
 
   render() {
-    const { redirect } = this.state;
-    if (redirect) {
-       return <Redirect to='/two' />;
+    const { redirectFour } = this.state;
+    if (redirectFour) {
+       return <Redirect to='/five' />;
      }
     return (
       <div className={styles.startGame}>
-      <form className={this.state.submitted ? styles.clearOut : ''} onSubmit={this.markIndividualReady.bind(this)}>
-        <label htmlFor="question">A guy's name</label>
+      <form className={this.state.submittedFour ? styles.clearOut : ''} onSubmit={this.markIndividualReady.bind(this)}>
+        <label htmlFor="question">He said: </label>
         <input id="question" type="text" ref={ el => this.inputEl = el }/>
-        <input type="submit" disabled={this.state.submitted} value="Ready for next step"/>
+        <input type="submit" disabled={this.state.submittedFour} value="Ready for next step"/>
       </form>
-      {this.state.submitted ? <p className={styles.blink_me}>Waiting for other players to finish, idiots ....</p> : null }
+      {this.state.submittedFour ? <p className={styles.blink_me}>Waiting for other players to finish, idiots ....</p> : null }
       </div>
     );
   }
 }
 
-export default startGame;
+export default fourthComp;

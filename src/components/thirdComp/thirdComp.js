@@ -54,7 +54,7 @@ class thirdComp extends Component {
 
     console.log('nextPlayersIDXRef --->', nextPlayersIDXRef);
     const papersRefToWrite = fire.database().ref(this.todaysDate + '/papers/' + nextPlayersIDXRef).push();
-    papersRefToWrite.set({secondRound: entry})
+    papersRefToWrite.set({they_met: entry})
 
     // let lsCache = this.profile;
     // lsCache.currentPosition = idx;
