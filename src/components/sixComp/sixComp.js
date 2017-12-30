@@ -42,7 +42,7 @@ class sixComp extends Component {
   }
 
   pushToAdjacentPlayerQuestionArr(idx, entry) {
-    const stage = 3;
+    const stage = 6;
 
     let nextPlayersIDXRef;
 
