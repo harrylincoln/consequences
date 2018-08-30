@@ -17,6 +17,7 @@ class DefaultLanding extends Component {
       this.setState({players: [...this.state.players, player]});
 
       console.log('players ===> ', this.state.players);
+      console.log('process stuff', process.env)
     });
     // if game started
     let gameOn = fire.database().ref(this.todaysDate + '/gameStarted');
