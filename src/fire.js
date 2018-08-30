@@ -5,7 +5,7 @@ const config = {
   authDomain: "consequences-cf53e.firebaseapp.com",
   databaseURL: "https://consequences-cf53e.firebaseio.com",
   projectId: "consequences-cf53e",
-  storageBucket: "",
+  storageBucket: "consequences-cf53e.appspot.com",
   messagingSenderId: "1034371850744"
 };
 
